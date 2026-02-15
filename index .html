@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>SMJ Tournament</title>
+  <meta charset="UTF-8">
+</head>
+
+<body>
+
+  <h1>SMJ Tournament</h1>
+
+  <!-- Google Login -->
+  <button onclick="googleLogin()">Login with Google</button>
+
+  <hr>
+
+  <h3>Create Account</h3>
+  <input type="email" id="email" placeholder="Enter Email"><br><br>
+  <input type="password" id="password" placeholder="Enter Password"><br><br>
+  <button onclick="signUp()">Sign Up</button>
+  <button onclick="login()">Login</button>
+
+  <p id="userInfo"></p>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+    import { 
+      getAuth, 
+      GoogleAuthProvider, 
+      signInWithPopup, 
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut 
+    } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAsrGjjTtGnH8snbHTrgf928R0yCeWfx0M",
+      authDomain: "smj-tournament-32076.firebaseapp.com",
+      projectId: "smj-tournament-32076",
+      storageBucket: "smj-tournament-32076.firebasestorage.app",
+      messagingSenderId: "378261475305",
+      appId: "1:378261475305:web:14e045c1bba0035a8e0578"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
+    const userInfo = document.getElementById("userInfo");
+
+    // Google Login
+    window.googleLogin = function() {
+      signInWithPopup(auth, provider)
+        .then((result) => {
+          userInfo.innerHTML = "Welcome: " + result.user.email + 
+          "<br><button onclick='logout()'>Logout</button>";
+        })
+        .catch((error) => alert(error.message));
+    }
+
+    // Email Sign Up
+    window.signUp = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          userInfo.innerHTML = "Account Created: " + userCredential.user.email +
+          "<br><button onclick='logout()'>Logout</button>";
+        })
+        .catch((error) => alert(error.message));
+    }
+
+    // Email Login
+    window.login = function() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          userInfo.innerHTML = "Welcome Back: " + userCredential.user.email +
+          "<br><button onclick='logout()'>Logout</button>";
+        })
+        .catch((error) => alert(error.message));
+    }
+
+    // Logout
+    window.logout = function() {
+      signOut(auth).then(() => {
+        userInfo.innerHTML = "";
+        alert("Logged Out");
+      });
+    }
+
+  </script>
+
+</body>
+</html>
